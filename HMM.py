@@ -23,26 +23,38 @@ class HiddenMarkovModel:
         self.emission_matrix = np.log(self.emission_matrix)
 
         # pi distribution, the starting probabilities
-        pi = np.random.rand(number_states,1)
-        pi = pi / pi.sum()
+        self.pi = np.random.rand(number_states,1)
+        self.pi = self.pi / self.pi.sum()
 
-        pi = np.log(pi)
+        self.pi = np.log(self.pi)
         print(self.emission_matrix,self.transition_matrix)
         # random initial state sequence
 
         return
     def forward_algorithm(self,observations,end_st): 
         """
-        Forward-backward Algorithm
+        Forward-backward Algorithm, ported from:
+        https://en.wikipedia.org/wiki/Forward%E2%80%93backward_algorithm#Pseudocode
         """
         fwd = []
         for i, observation_i in enumerate(observations):
             f_curr = {}
-            for st in range(self.emission_matrix.shape(0)):
+            for st in range(self.emission_matrix.shape[0]):
                 if i == 0:
-                  prev_f_sum = start_prob[st]  
+                    prev_f_sum = self.pi[st]
+                else:
+                    prev_f_sum = sum(f_prev[k] * self.transition_matrix[k][st] for k in range(self.emission_matrix.shape[0]))
+
+                f_curr[st] = self.emission_matrix[st][observation_i] * prev_f_sum
+
+            fwd.append(f_curr)
+            f_prev = f_curr
+        print(p_fwd)
+        p_fwd = sum(f_curr[k] * self.transition_matrix[k][end_st] for k in range(self.emission_matrix.shape[0]))
+
     
 
 if __name__ == "__main__":
     df = pd.read_csv('Data/input.csv')
     model = HiddenMarkovModel(df['decile'],4)
+    model.forward_algorithm(df['decile'][:10],3)
