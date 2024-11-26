@@ -43,14 +43,17 @@ class HiddenMarkovModel:
                 if i == 0:
                     prev_f_sum = self.pi[st]
                 else:
-                    prev_f_sum = sum(f_prev[k] * self.transition_matrix[k][st] for k in range(self.emission_matrix.shape[0]))
+                    probs = [f_prev[k] + self.transition_matrix[k][st] for k in range(self.emission_matrix.shape[0])]
+                    prev_f_sum = np.log(sum(np.exp(probs))) 
 
-                f_curr[st] = self.emission_matrix[st][observation_i] * prev_f_sum
+                f_curr[st] = self.emission_matrix[st][observation_i-1] + prev_f_sum
 
             fwd.append(f_curr)
             f_prev = f_curr
+        probs = [f_curr[k] + self.transition_matrix[k][end_st] for k in range(self.emission_matrix.shape[0])]
+        p_fwd = np.log(sum(np.exp(probs)))
+        print(fwd)
         print(p_fwd)
-        p_fwd = sum(f_curr[k] * self.transition_matrix[k][end_st] for k in range(self.emission_matrix.shape[0]))
 
     
 
