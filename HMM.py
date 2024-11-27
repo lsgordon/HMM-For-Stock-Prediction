@@ -58,6 +58,8 @@ class HiddenMarkovModel:
         p_fwd = np.log(sum(np.exp(probs)))
         print(fwd)
         print(p_fwd)
+
+        # now compute the backward proceedure
         bwd = []
         for i in range(len(observations) - 1, -1, -1):
             b_curr = {}
@@ -79,7 +81,14 @@ class HiddenMarkovModel:
         print(bwd)
         print(p_bwd)
         assert(p_fwd == p_bwd)
-        
+
+        # Compute posterior
+        posterior = []
+        for i in range(len(observations)):
+            posterior.append({st: fwd[i][st] * bwd[i][st] / p_fwd for st in range(self.emission_matrix.shape[0])})
+
+        assert p_fwd ==  p_bwd
+        return fwd, bwd, posterior
 
     
 
