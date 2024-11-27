@@ -40,8 +40,12 @@ class HiddenMarkovModel:
         for i, observation_i in enumerate(observations):
             f_curr = {}
             for st in range(self.emission_matrix.shape[0]):
+
+                # base case for the algorithm
                 if i == 0:
                     prev_f_sum = self.pi[st]
+                
+                # else use the inductive definition here
                 else:
                     probs = [f_prev[k] + self.transition_matrix[k][st] for k in range(self.emission_matrix.shape[0])]
                     prev_f_sum = np.log(sum(np.exp(probs))) 
@@ -54,6 +58,28 @@ class HiddenMarkovModel:
         p_fwd = np.log(sum(np.exp(probs)))
         print(fwd)
         print(p_fwd)
+        bwd = []
+        for i in range(len(observations) - 1, -1, -1):
+            b_curr = {}
+            for st in range(self.emission_matrix.shape[0]):
+                # base case for the algorithm
+                if i == len(observations) - 1:
+                    prev_b_sum = self.transition_matrix[st][end_st] 
+                else:
+                    probs = [b_prev[l] + self.emission_matrix[l][observations[i+1]-1] + self.transition_matrix[st][l] 
+                             for l in range(self.emission_matrix.shape[0])]
+                    prev_b_sum = np.log(sum(np.exp(probs)))
+
+                b_curr[st] = prev_b_sum
+
+            bwd.insert(0,b_curr)
+            b_prev = b_curr
+        probs = [self.pi[l] + self.emission_matrix[l][observations[0]-1] + b_curr[l] for l in range(self.emission_matrix.shape[0])]
+        p_bwd = np.log(sum(np.exp(probs)))
+        print(bwd)
+        print(p_bwd)
+        assert(p_fwd == p_bwd)
+        
 
     
 
