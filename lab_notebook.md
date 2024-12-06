@@ -12,6 +12,13 @@ Initial Commit
 ## 11/26/24 2:30 pm - Lab session
 - Building the forward backward algorithm
 - Debugging the forward backward algorithm
+## 12/5/24 2:30
+- finishing the baum welch
+- forgot to do lab notebook, will look at commit history to determine
+## 12/6/24 4:30-6:30
+- finished the visualization component of the lab
+- normalized the probabilities of the lab
+
 >>>>>>> 86cfb90 (Updates on data)
 
 ## 12/06/24 6:42 pm
