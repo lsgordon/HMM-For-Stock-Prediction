@@ -19,8 +19,6 @@ Initial Commit
 - finished the visualization component of the lab
 - normalized the probabilities of the lab
 
->>>>>>> 86cfb90 (Updates on data)
-
 ## 12/06/24 6:42 pm
 - developing the clean_script.py file to clean the stock data for lin_reg
 - imported original stock data of lin_reg and initial clean (to be refined) of original
@@ -29,3 +27,5 @@ Initial Commit
 ## 12/06/24 11:00 pm
 - drafting presentation for 12/09
 - adding non-timestamped additions to lab notebook
+
+>>>>>>> 86cfb90 (Updates on data)
