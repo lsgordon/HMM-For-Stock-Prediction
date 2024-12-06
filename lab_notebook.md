@@ -15,7 +15,5 @@ Initial Commit
 ## 12/5/24 2:30 pm 
 - finishing the baum welch
 - forgot to do lab notebook, will look at commit history to determine
-## 12/6/24
-- visualizing the data
-- normalizing the output to prevent overfitting
+
 >>>>>>> 86cfb90 (Updates on data)

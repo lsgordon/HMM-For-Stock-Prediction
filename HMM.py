@@ -2,6 +2,7 @@
 Hidden Markov Model class
 This file contains the source code for the hidden markov model for this assignment
 """
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 np.random.seed(42)
@@ -147,13 +148,13 @@ class HiddenMarkovModel:
         # Iterate backwards from the second-to-last element to the first
         for t in range(num_obs - 2, -1, -1):
             # print(best_path[t + 1],t+1)
-            print(backpointers[int(best_path[t + 1]),t + 1])
+            # print(backpointers[int(best_path[t + 1]),t + 1])
             best_path[t] = backpointers[int(best_path[t + 1])][t + 1]
         
         print(best_path)
         return best_path, best_path_prob
     
-    def baum_welch(self, observation_sequence, iterations=25):
+    def baum_welch(self, observation_sequence, iterations=10):
         """
         Baum-Welch algorithm (Expectation-Maximization) to estimate HMM parameters.
         """
@@ -205,6 +206,20 @@ class HiddenMarkovModel:
                         if observation_sequence[t] == vk + 1:
                             log_probs.append(gamma[t, j])
                     self.emission_matrix[j, vk] = self.logsumexp(log_probs) - self.logsumexp(gamma[:, j])
+        # convert the probabilities from logs into numericals
+        self.transition_matrix = np.exp(self.transition_matrix)
+        self.emission_matrix = np.exp(self.emission_matrix)
+        self.pi = np.exp(self.pi)
+        
+        # find the number
+        self.pi = self.pi / sum(self.pi)
+        self.transition_matrix = self.transition_matrix / self.transition_matrix.sum(axis=0, keepdims=True)
+        self.emission_matrix = self.emission_matrix / self.emission_matrix.sum(axis=1, keepdims=True)
+
+        # convert back
+        self.transition_matrix = np.log(self.transition_matrix)
+        self.emission_matrix = np.log(self.emission_matrix)
+        self.pi = np.log(self.pi)
 
     def logsumexp(self, log_probs):
         """
@@ -215,10 +230,61 @@ class HiddenMarkovModel:
 
 if __name__ == "__main__":
     df = pd.read_csv('Data/input.csv')
-    model = HiddenMarkovModel(df['decile'],4)
+    model = HiddenMarkovModel(df['decile'],6)
     model.forward_backward_algorithm(df['decile'][:10],3)
     print(model.posterior)
     # model.viterbi(df['decile'][:100])
     pass
     model.baum_welch(df['decile'][:100])
-    pass
+    df_test = pd.read_csv('Data/test.csv')
+    final_state = model.viterbi(df['decile'][:10])[0][-1]
+    print(final_state)
+
+    # now we want to plot the probability of transitioning to the different states in time t+1
+
+    # find the probabilites of the rows and columns
+    transition_row_probs = model.transition_matrix[int(final_state)]
+    emission_row_probs = model.emission_matrix[int(final_state)]
+
+    # find the numerical values
+    transition_row_probs = np.exp(transition_row_probs)
+    emission_row_probs = np.exp(emission_row_probs)
+
+    # plot the transitions probabilites for the state that we are in
+    plt.bar(range(0,len(transition_row_probs)),transition_row_probs)
+    plt.xticks(range(0, len(transition_row_probs)))
+    plt.xlabel('State')
+    plt.ylabel('Probability of Being in the Next State')
+    plt.title('Probability of Being in All States at Times t+1')
+    plt.savefig('figures/transition_plot.png')
+    plt.show()
+
+    # now find probability of all deciles
+    to_viz = np.zeros(10)
+    for i,val in enumerate(transition_row_probs):
+        to_viz += val * np.exp(model.emission_matrix[i])
+    print(to_viz)
+
+    # find the expected value
+    expected_value = np.sum(np.arange(0, len(to_viz) + 0) * to_viz)
+
+    plt.bar(range(0,len(to_viz)+0),to_viz, color = 'lightcoral', label='Deciles', align='edge')
+
+    # plot the expected value
+    plt.axvline(x=expected_value, color='black', linestyle='--', 
+                label=f'Expected Value: {expected_value:.2f}')
+    plt.xticks(range(0, len(to_viz)))
+    plt.xlabel('Decile of Log Returns')
+    plt.ylabel('Probability of Decile of Log returns')
+    plt.title('Probability of Each Decile of Returns')
+    plt.savefig('figures/emission_plot.png')
+    plt.legend()
+    plt.show()
+
+    # calculate the quantile
+    quantile_value = df['log_returns'].quantile(expected_value / 10)
+
+    print(quantile_value)
+    # calculate the implied value
+    implied_value = df_test.iloc[-1]['price_avg'] * np.exp(quantile_value)
+    print(implied_value)
