@@ -223,7 +223,7 @@ class HiddenMarkovModel:
 
     def logsumexp(self, log_probs):
         """
-        Log-sum-exp trick to avoid underflow.
+        Log-sum-exp trick to avoid underflow
         """
         max_log_prob = np.max(log_probs)
         return max_log_prob + np.log(np.sum(np.exp(log_probs - max_log_prob)))
@@ -251,11 +251,11 @@ if __name__ == "__main__":
     emission_row_probs = np.exp(emission_row_probs)
 
     # plot the transitions probabilites for the state that we are in
-    plt.bar(range(0,len(transition_row_probs)),transition_row_probs)
+    plt.bar(range(0,len(transition_row_probs)),transition_row_probs, color = 'lightcoral')
     plt.xticks(range(0, len(transition_row_probs)))
     plt.xlabel('State')
     plt.ylabel('Probability of Being in the Next State')
-    plt.title('Probability of Being in All States at Times t+1')
+    plt.title('Probability of Next States for the Market on Monday Dec 9th')
     plt.savefig('figures/transition_plot.png')
     plt.show()
 
@@ -276,7 +276,7 @@ if __name__ == "__main__":
     plt.xticks(range(0, len(to_viz)))
     plt.xlabel('Decile of Log Returns')
     plt.ylabel('Probability of Decile of Log returns')
-    plt.title('Probability of Each Decile of Returns')
+    plt.title('Probability of Each Decile of Returns for Dec 9th')
     plt.savefig('figures/emission_plot.png')
     plt.legend()
     plt.show()
