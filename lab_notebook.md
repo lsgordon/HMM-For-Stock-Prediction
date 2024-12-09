@@ -34,4 +34,7 @@ Initial Commit
 - plotted predictions vs actual
 - added plots to figures
 
+## 12/09/24 12:45am
+- identified most significant outlier in results: NRG.N, energy management company
+
 >>>>>>> 86cfb90 (Updates on data)
