@@ -28,4 +28,10 @@ Initial Commit
 - drafting presentation for 12/09
 - adding non-timestamped additions to lab notebook
 
+## 12/08/24 12:00pm-11:45pm
+- finished debugging clean_script.py and cleaning stock data
+- ported regression code from lab3, obtained weights
+- plotted predictions vs actual
+- added plots to figures
+
 >>>>>>> 86cfb90 (Updates on data)
