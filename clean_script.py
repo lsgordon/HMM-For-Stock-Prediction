@@ -1,6 +1,7 @@
 import numpy as np
 from copy import deepcopy
 import csv
+import math
 
 def splitting(line: str):
     split_string = deepcopy(line)
@@ -25,11 +26,12 @@ def clean_csv(input_file, output_file):
         writer.writerow(header)  # Write the header row
         writer.writerows(rows)  # Write the filtered rows
     
-    file = open(output_file)
-    for line in output_file:
-        for cell in line:
-            if all(cell.strip()):
-                pass
+    num_data_path = "Data/num_data.csv"
+    with open(num_data_path, 'w', newline='', encoding='utf-8') as numfile:
+        writer = csv.writer(numfile)
+        reduced_rows = [row[5:] for row in rows if len(row) > 5 and not any(math.isnan(float(entry)) for entry in row[5:])]
+        # reduced_rows = [row[5:] for row in rows if len(row) > 5]  # Exclude first 5 columns; unfortunate presence of NaN value in data, hence above line
+        writer.writerows(reduced_rows)  # Write the reduced rows
 
 def main():
     # Usage
