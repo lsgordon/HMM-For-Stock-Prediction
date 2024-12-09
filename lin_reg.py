@@ -21,6 +21,36 @@ def fit(X: np.array, y: np.array) :
     outer = np.matmul(inner, y)
     return outer
 
+def plot_results(y_actual, y_pred):
+    """
+    Visualize MLR results with Matplotlib.
+    """
+    # Scatter plot of actual vs predicted
+    plt.figure(figsize=(10, 5))
+
+    # Actual vs Predicted
+    plt.subplot(1, 2, 1)
+    plt.scatter(y_actual, y_pred, alpha=0.6, color="blue", edgecolor="k")
+    plt.plot(y_actual, y_actual, color="red", linestyle="--", label="Perfect Prediction")
+    plt.title("Actual vs Predicted")
+    plt.xlabel("Actual Values")
+    plt.ylabel("Predicted Values")
+    plt.legend()
+
+    # Residual plot
+    plt.subplot(1, 2, 2)
+    residuals = y_actual - y_pred
+    plt.scatter(y_pred, residuals, alpha=0.6, color="green", edgecolor="k")
+    plt.axhline(0, color="red", linestyle="--")
+    plt.title("Residuals vs Predicted")
+    plt.xlabel("Predicted Values")
+    plt.ylabel("Residuals")
+
+    # Show plots
+    plt.tight_layout()
+    plt.savefig("figures/lin_reg_results.pdf", format="pdf")
+    # plt.show()
+
 def main():
     
     X_h = np.array(make_usable("Data/num_data.csv"))
@@ -39,9 +69,12 @@ def main():
 
     # should return the coefficients
     # print(fit(X_r, y_r))
-
+    weights = fit(X_r, y_r)
     # analytic weights
-    print("Analytic Solution: " + str(fit(X_r, y_r)))
+    print("Analytic Solution: " + str(weights))
+    y_pred = np.matmul(X_r, weights)
+    
+    plot_results(y_r, y_pred)
     pass
 
 if __name__ == "__main__":
