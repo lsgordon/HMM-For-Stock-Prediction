@@ -24,7 +24,12 @@ def clean_csv(input_file, output_file):
         writer = csv.writer(outfile)
         writer.writerow(header)  # Write the header row
         writer.writerows(rows)  # Write the filtered rows
-
+    
+    file = open(output_file)
+    for line in output_file:
+        for cell in line:
+            if all(cell.strip()):
+                pass
 
 def main():
     # Usage
