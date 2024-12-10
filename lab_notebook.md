@@ -37,4 +37,8 @@ Initial Commit
 ## 12/09/24 12:45am
 - identified most significant outlier in results: NRG.N, energy management company
 
+## 12/10/24
+- discussed future steps for the project
+- figuring out automatic model validation
+
 >>>>>>> 86cfb90 (Updates on data)
