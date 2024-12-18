@@ -288,3 +288,26 @@ if __name__ == "__main__":
     # calculate the implied value
     implied_value = df_test.iloc[-1]['price_avg'] * np.exp(quantile_value)
     print(implied_value)
+
+    # now do some model validation (oh jeez.)
+
+
+    predictions = []
+    actual_deciles = []
+    errors = []
+    for i in range(100, 200):  # Iterate through the data
+        # Use a rolling window of data for prediction
+        window_data = df['decile'][i - 10: i]  
+        # Predict the final hidden state using the Viterbi algorithm
+        final_state = model.viterbi(window_data)
+        # Get the emission probabilities for the predicted state
+        emission_probs = np.exp(model.emission_matrix[int(final_state)]) 
+        # Calculate the expected decile
+        expected_decile = np.sum(np.arange(0, len(emission_probs)) * emission_probs)  
+        # Store the predicted and actual deciles
+        predictions.append(expected_decile)
+        actual_deciles.append(df['decile'][i + 1]) 
+        # Calculate the prediction error (absolute difference)
+        error = abs(expected_decile - df['decile'][i + 1])  
+        errors.append(error)
+    print(errors)
