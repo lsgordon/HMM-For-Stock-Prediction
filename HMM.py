@@ -161,7 +161,7 @@ class HiddenMarkovModel:
         print(best_path)
         return best_path, best_path_prob
     
-    def baum_welch(self, observation_sequence, iterations=10):
+    def baum_welch(self, observation_sequence, iterations=15):
         """
         Baum-Welch algorithm (Expectation-Maximization) to estimate HMM parameters.
         """
@@ -300,7 +300,7 @@ if __name__ == "__main__":
     predictions = []
     actual_deciles = []
     errors = []
-    for i in range(100,200):
+    for i in range(0,200):
         snip = df['decile'][i:i+10].copy()
         snip.index -= i
         model.viterbi(snip)
