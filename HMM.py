@@ -29,7 +29,7 @@ class HiddenMarkovModel:
         self.pi = self.pi / self.pi.sum()
 
         self.pi = np.log(self.pi)
-        print(self.emission_matrix,self.transition_matrix)
+        # print(self.emission_matrix,self.transition_matrix)
         # random initial state sequence
 
         return
@@ -63,7 +63,7 @@ class HiddenMarkovModel:
         probs = [f_curr[k] + self.transition_matrix[k][end_st] for k in range(self.emission_matrix.shape[0])]
         p_fwd = np.log(sum(np.exp(probs)))
         # print(fwd)
-        print(p_fwd)
+        # print(p_fwd)
 
         # now compute the backward proceedure
         bwd = []
@@ -85,7 +85,7 @@ class HiddenMarkovModel:
         probs = [self.pi[l] + self.emission_matrix[l][observations[0]-1] + b_curr[l] for l in range(self.emission_matrix.shape[0])]
         p_bwd = np.log(sum(np.exp(probs)))
         # print(bwd)
-        print(p_bwd)
+        # print(p_bwd)
         # assert(p_fwd == p_bwd)
 
         # Compute posterior, which is 
@@ -121,7 +121,7 @@ class HiddenMarkovModel:
             except:
                 # https://xkcd.com/1838/
                 trellis[s][0] = rd.random()
-        print(trellis)
+        # print(trellis)
 
         # compute argmax
         for t in range(1,num_obs):
@@ -158,7 +158,7 @@ class HiddenMarkovModel:
             # print(backpointers[int(best_path[t + 1]),t + 1])
             best_path[t] = backpointers[int(best_path[t + 1])][t + 1]
         
-        print(best_path)
+        # print(best_path)
         return best_path, best_path_prob
     
     def baum_welch(self, observation_sequence, iterations=15):
@@ -245,7 +245,7 @@ if __name__ == "__main__":
     model.baum_welch(df['decile'][:100])
     df_test = pd.read_csv('Data/test.csv')
     final_state = model.viterbi(df['decile'][:10])[0][-1]
-    print(final_state)
+    # print(final_state)
 
     # now we want to plot the probability of transitioning to the different states in time t+1
 
@@ -270,7 +270,7 @@ if __name__ == "__main__":
     to_viz = np.zeros(10)
     for i,val in enumerate(transition_row_probs):
         to_viz += val * np.exp(model.emission_matrix[i])
-    print(to_viz)
+    # print(to_viz)
 
     # find the expected value
     expected_value = np.sum(np.arange(0, len(to_viz) + 0) * to_viz)
@@ -291,10 +291,10 @@ if __name__ == "__main__":
     # calculate the quantile
     quantile_value = df['log_returns'].quantile(expected_value / 10)
 
-    print(quantile_value)
+    # print(quantile_value)
     # calculate the implied value
     implied_value = df_test.iloc[-1]['price_avg'] * np.exp(quantile_value)
-    print(implied_value)
+    # print(implied_value)
 
     # now do some model validation (oh jeez.)
     predictions = []
@@ -329,3 +329,4 @@ if __name__ == "__main__":
     # MAE calculation
     errors = np.abs(errors)
     print(f"Mean Absolute Error: {np.mean(errors)}")
+    print(f'Benchmark Mean Absolute Error: 2.5')
