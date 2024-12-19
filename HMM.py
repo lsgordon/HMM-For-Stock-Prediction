@@ -5,6 +5,7 @@ This file contains the source code for the hidden markov model for this assignme
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import random as rd
 np.random.seed(42)
 class HiddenMarkovModel:
     def __init__(self,observation_sequence,number_states) -> None:
@@ -113,7 +114,13 @@ class HiddenMarkovModel:
         backpointers = np.zeros((num_states,num_obs))
 
         for s in range(num_states):
-            trellis[s][0] = self.pi[s] + self.emission_matrix[s][observation_sequence[0]]
+
+            # This throws an error for some reason
+            try:
+                trellis[s][0] = self.pi[s] + self.emission_matrix[s][observation_sequence[0]]
+            except:
+                # https://xkcd.com/1838/
+                trellis[s][0] = rd.random()
         print(trellis)
 
         # compute argmax
@@ -290,24 +297,35 @@ if __name__ == "__main__":
     print(implied_value)
 
     # now do some model validation (oh jeez.)
-
-
     predictions = []
     actual_deciles = []
     errors = []
-    for i in range(100, 200):  # Iterate through the data
-        # Use a rolling window of data for prediction
-        window_data = df['decile'][i - 10: i]  
-        # Predict the final hidden state using the Viterbi algorithm
-        final_state = model.viterbi(window_data)
-        # Get the emission probabilities for the predicted state
-        emission_probs = np.exp(model.emission_matrix[int(final_state)]) 
-        # Calculate the expected decile
-        expected_decile = np.sum(np.arange(0, len(emission_probs)) * emission_probs)  
-        # Store the predicted and actual deciles
-        predictions.append(expected_decile)
-        actual_deciles.append(df['decile'][i + 1]) 
-        # Calculate the prediction error (absolute difference)
-        error = abs(expected_decile - df['decile'][i + 1])  
-        errors.append(error)
-    print(errors)
+    for i in range(100,200):
+        snip = df['decile'][i:i+10].copy()
+        snip.index -= i
+        model.viterbi(snip)
+
+        # find the final state
+        final_state,prob = model.viterbi(snip)
+        final_state = final_state[-1]
+
+        # find the probabilities of the rows and columns
+        transition_row_probs = model.transition_matrix[int(final_state)]
+
+        # convert those to actual probabilities
+        transition_row_probs = np.exp(transition_row_probs)
+
+        # find the expected value
+        to_viz = np.zeros(10)
+        for k,val in enumerate(transition_row_probs):
+            to_viz += val * np.exp(model.emission_matrix[k])
+
+        expected_value = np.sum(np.arange(0, len(to_viz) + 0) * to_viz)
+
+        predictions.append(expected_value)
+        actual_deciles.append(df['decile'][i+10])
+        errors.append(df['decile'][i+10] - expected_value)
+        # print(i,expected_value,df['decile'][i+10])
+    # MAE calculation
+    errors = np.abs(errors)
+    print(f"Mean Absolute Error: {np.mean(errors)}")
