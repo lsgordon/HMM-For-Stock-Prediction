@@ -201,8 +201,8 @@ class HiddenMarkovModel:
             # Update transition matrix
             for i in range(N):
                 for j in range(N):
-                    print(self.logsumexp(xi[:, i, j]))
-                    print(self.logsumexp(gamma[:-1, i]))
+                    # print(self.logsumexp(xi[:, i, j]))
+                    # print(self.logsumexp(gamma[:-1, i]))
                     self.transition_matrix[i, j] = self.logsumexp(xi[:, i, j]) - self.logsumexp(gamma[:-1, i])
 
             # Update emission matrix
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     df = pd.read_csv('Data/input.csv')
     model = HiddenMarkovModel(df['decile'],6)
     model.forward_backward_algorithm(df['decile'][:10],3)
-    print(model.posterior)
+    # print(model.posterior)
     # model.viterbi(df['decile'][:100])
     pass
     model.baum_welch(df['decile'][:100])
