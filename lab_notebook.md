@@ -44,13 +44,26 @@ Initial Commit
 ## 12/18/24
 - implemented said model validation
 - found that the model slightly outperforms baseline this is not significantly significant, and for it to be, we would need about 10 years of training data:
-We can calculate the mean absolute error of the discrete uniform distribution ($a = 1,b=10$), and we find that the best constant is 2.5.
+We can calculate the mean absolute error of the discrete uniform distribution ($a = 1,b=10$), and we find that the best constant is 5.
+
+
 Our goal therefore, is to show that our model beats this constant in a statistically significant way, using the CLT
+
+
 $$\frac{\bar{x}-\mu}{\sigma/\sqrt{n}}$$
+
+
 we can substitue in for the properties of this distribution to find
+
+
 $$\frac{\bar{x}-2.5}{2.872/\sqrt{n}}$$
-which we would want to give us a test statistic larger than about 1.67.
-When we tune the hyperparameter for the baum-welch, we can minimize $\bar{x}$ to about 2.35, but we start to overfit after about 15 iterations. With this in mind, we would need to have a lot of training data to make this fraction positive and keep the market in the same state. This seems about impossible, and thus keeping this statistically admissible would be very hard.
+
+
+which we would want to give us a test statistic larger than about $1.67$, to be significant at the 95% confidence level.
+
+
+When we tune the hyperparameters for the baum-welch, we can minimize $\bar{x}$ to about 2.35, but we start to overfit after about 15 iterations, which brings the training MAE back up to about 2.5. This gives us a numerator of about $.15$ in that CLT equation. The other thing we could try is to make $n$ so large that it forces the bottom part of the fraction so large, and this might be an interesting idea for a backtest.
+
 
 It does still, however, probably outperform the market ever so slightly.
 >>>>>>> 86cfb90 (Updates on data)
